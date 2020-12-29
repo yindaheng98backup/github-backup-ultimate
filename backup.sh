@@ -11,7 +11,8 @@ cd $BKUP_REPO
 
 #主仓库branch:ref列表
 echo "主仓库："
-declare -a branch_dict_main=()
+unset branch_dict_main
+declare -A branch_dict_main=()
 for branch in $(git branch --remote --format='%(refname:short)'); do
     branch_name=${branch/"main/"/''}
     branch_dict_main+=(["$branch_name"]="$branch")
@@ -23,6 +24,7 @@ for branch_name in ${!branch_dict_main[@]}; do
 done
 #备份仓库branch列表
 echo "备份仓库："
+unset branch_list_bkup
 declare -a branch_list_bkup=()
 for branch in $(git branch --format='%(refname:short)'); do
     branch_list_bkup+=("$branch")
@@ -53,7 +55,15 @@ for branch in ${!branch_dict_main[@]}; do
         echo "主仓库和备份仓库中的'$branch'没有diff，无需修改"
         continue
     fi
-
+    if [ -z "$(git diff $branch_in_bkup...$branch_in_main)" ]; then
+        #3-2. 如果同名的branch中的commit记录不是上述两种情况，则将备份仓库中的branch重命名为“时间+branch名”，而用主仓库中的branch覆盖原branch
+        echo "主仓库中的'$branch'不是备份仓库的 fast forward，需要先将备份仓库中的'$branch'重命名"
+        branch_rename=$branch"."$(date '+%Y%m%d%H%M%S')
+        echo "备份仓库的'$branch'重命名为'$branch_rename'"
+    else
+        #3-3. 如果同名的branch中主仓库的commit记录只比备份仓库的commit记录多最后几个，前面都是完全一直，则直接用主仓库中的branch覆盖之
+        echo "主仓库中的'$branch'是备份仓库的 fast forward，可以直接覆盖"
+    fi
     echo "用主仓库的'$branch'和覆盖备份仓库的'$branch'"
 done
 
