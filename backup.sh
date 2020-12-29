@@ -9,38 +9,30 @@ git --git-dir="$BKUP_REPO/.git" remote add main $MAIN_REPO          #添加主�
 git --git-dir="$BKUP_REPO/.git" --work-tree="$BKUP_REPO" fetch main #将主仓库的内容获取到备份仓库
 cd $BKUP_REPO
 
-#获取分支列表
-function get_branch_dict() {
-    declare -a refs_list
-    refs_root=$1
-    eval $(git for-each-ref --shell --format='refs_list+=(%(refname))' $refs_root)
-    for ref in ${refs_list[@]}; do #计算主仓库branch:ref
-        branch_name=${ref/"$refs_root"/''}
-        branch_dict_name=$2
-        echo "$branch_dict_name+=(['$branch_name']='$ref')"
-    done
-}
-declare -A branch_dict_main #主仓库branch:ref列表
-declare -A branch_dict_bkup #备份仓库branch:ref列表
-eval $(get_branch_dict 'refs/heads/' 'branch_dict_bkup')
-eval $(get_branch_dict 'refs/remotes/main/' 'branch_dict_main')
-
-#输出主仓库分支列表以便帮助排查错误
+#主仓库branch:ref列表
 echo "主仓库："
-for branch in ${!branch_dict_main[@]}; do
-    ref=${branch_dict_main["$branch"]}
-    echo -e "$branch\t$ref"
+declare -a branch_dict_main=()
+for branch in $(git branch --remote --format='%(refname:short)'); do
+    branch_name=${branch/"main/"/''}
+    branch_dict_main+=(["$branch_name"]="$branch")
+done
+#输出主仓库分支列表以便帮助排查错误
+for branch_name in ${!branch_dict_main[@]}; do
+    ref=${branch_dict_main["$branch_name"]}
+    echo -e "$branch_name\t$branch"
+done
+#备份仓库branch列表
+echo "备份仓库："
+declare -a branch_list_bkup=()
+for branch in $(git branch --format='%(refname:short)'); do
+    branch_list_bkup+=("$branch")
 done
 #输出备份仓库分支列表以便帮助排查错误
-echo "备份仓库："
-for branch in ${!branch_dict_bkup[@]}; do
-    ref=${branch_dict_bkup["$branch"]}
-    echo -e "$branch\t$ref"
+for branch in ${branch_list_bkup[@]}; do
+    echo "$branch"
 done
 
 cd ..
-rm -rf $MAIN_REPO
-rm -rf $BKUP_REPO
 
 function pack_repo() {
     #TODO: 1. 将上面那个函数操作完成的备份仓库打个压缩包
