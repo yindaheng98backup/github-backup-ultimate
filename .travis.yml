@@ -5,4 +5,4 @@ branches:
   only:
     - master
 script:
-  - bash run.sh yindaheng98 http://$GH_TOKEN@github.com/yindaheng98/backup test $GH_TOKEN
+  - bash run.sh yindaheng98 http://$GH_TOKEN@github.com/yindaheng98/backup backup_repo $GH_TOKEN
