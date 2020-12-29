@@ -37,4 +37,4 @@ git init
 git add -A
 git commit -m 'TravisCI Backup'
 set -e
-git push -u $PACKREPO_URL HEAD:master --force
+git push -u $PACKREPO_URL HEAD:$PACKREPO_BRANCH --force
