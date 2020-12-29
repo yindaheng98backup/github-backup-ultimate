@@ -41,6 +41,8 @@ for branch in ${!branch_dict_main[@]}; do
     if [[ ! " ${branch_list_bkup[@]} " =~ " $branch " ]]; then
         #2. 如果主仓库中有备份仓库中没有的branch，则创建branch
         echo "备份仓库中缺少'$branch'分支，需要添加"
+        git checkout $branch_in_main
+        git checkout -b $branch
         continue
     fi
 
