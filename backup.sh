@@ -1,32 +1,46 @@
-function backup_branch() {
-    BRANCH=$1
-    git diff 
-}
+#!/bin/bash
 
-function backup_repo() {
-    REPO=$1
-    git remote add -f backup $REPO
-    git remote update
-    git branch
-}
+# 此脚本将主仓库分支按指定规则合并到备份仓库的分支中
 
-function merge_repo() {
-    SRC_REPO_DIR=$1 #主仓库
-    DST_REPO_DIR=$2 #备份仓库
-    # 将主仓库分支按指定规则合并到备份仓库的分支中
-    cd DST_REPO_DIR #切换到备份仓库
-    git remote add other ../$SRC_REPO_DIR #添加主仓库作为备份仓库的远程仓库
-    git fetch other #将主仓库的内容获取到备份仓库
-    #TODO: 1. 比对主仓库(即other)和备份仓库(即DST_REPO_DIR)的branch结构
-    #TODO: 2. 如果主仓库中有备份仓库中没有的branch，则创建branch
-    #TODO: 3. 如果主仓库中有与备份仓库中同名的branch，则进一步比对：
-    #TODO:     * 如果同名的branch中的commit记录完全一致，则不进行操作
-    #TODO:     * 如果同名的branch中主仓库的commit记录只比备份仓库的commit记录多最后几个，前面都是完全一直，则直接用主仓库中的branch覆盖之
-    #TODO:     * 如果同名的branch中的commit记录不是上述两种情况，则将备份仓库中的branch重命名为“时间+branch名”，而用主仓库中的branch覆盖原branch
-    #TODO: 4. push备份仓库
-    git checkout -b repo2 other/master
-    cd ..
+MAIN_REPO=$1 #主仓库目录
+BKUP_REPO=$2 #备份仓库目录
+
+git --git-dir="$BKUP_REPO/.git" remote add main $MAIN_REPO          #添加主仓库作为备份仓库的远程仓库
+git --git-dir="$BKUP_REPO/.git" --work-tree="$BKUP_REPO" fetch main #将主仓库的内容获取到备份仓库
+cd $BKUP_REPO
+
+#获取分支列表
+function get_branch_dict() {
+    declare -a refs_list
+    refs_root=$1
+    eval $(git for-each-ref --shell --format='refs_list+=(%(refname))' $refs_root)
+    for ref in ${refs_list[@]}; do #计算主仓库branch:ref
+        branch_name=${ref/"$refs_root"/''}
+        branch_dict_name=$2
+        echo "$branch_dict_name+=(['$branch_name']='$ref')"
+    done
 }
+declare -A branch_dict_main #主仓库branch:ref列表
+declare -A branch_dict_bkup #备份仓库branch:ref列表
+eval $(get_branch_dict 'refs/heads/' 'branch_dict_bkup')
+eval $(get_branch_dict 'refs/remotes/main/' 'branch_dict_main')
+
+#输出主仓库分支列表以便帮助排查错误
+echo "主仓库："
+for branch in ${!branch_dict_main[@]}; do
+    ref=${branch_dict_main["$branch"]}
+    echo -e "$branch\t$ref"
+done
+#输出备份仓库分支列表以便帮助排查错误
+echo "备份仓库："
+for branch in ${!branch_dict_bkup[@]}; do
+    ref=${branch_dict_bkup["$branch"]}
+    echo -e "$branch\t$ref"
+done
+
+cd ..
+rm -rf $MAIN_REPO
+rm -rf $BKUP_REPO
 
 function pack_repo() {
     #TODO: 1. 将上面那个函数操作完成的备份仓库打个压缩包
