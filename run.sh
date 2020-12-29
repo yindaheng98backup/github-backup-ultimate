@@ -3,6 +3,7 @@ GH_TOKEN=$4
 
 PACKREPO_URL=$2
 PACKREPO_BRANCH=$3
+rm -rf ./.git
 rm -rf ./backup
 git clone -b $PACKREPO_BRANCH $PACKREPO_URL ./backup
 cd ./backup
