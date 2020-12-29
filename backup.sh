@@ -18,7 +18,7 @@ for branch in $(git branch --remote --format='%(refname:short)'); do
 done
 #输出主仓库分支列表以便帮助排查错误
 for branch_name in ${!branch_dict_main[@]}; do
-    ref=${branch_dict_main["$branch_name"]}
+    branch=${branch_dict_main["$branch_name"]}
     echo -e "$branch_name\t$branch"
 done
 #备份仓库branch列表
@@ -32,6 +32,30 @@ for branch in ${branch_list_bkup[@]}; do
     echo "$branch"
 done
 
+#1. 比对主仓库和备份仓库的branch结构
+for branch in ${!branch_dict_main[@]}; do
+    echo "检查'$branch'分支"
+    branch_in_main=${branch_dict_main["$branch"]}
+    branch_in_bkup=$branch
+
+    if [[ ! " ${branch_list_bkup[@]} " =~ " $branch " ]]; then
+        #2. 如果主仓库中有备份仓库中没有的branch，则创建branch
+        echo "备份仓库中缺少'$branch'分支，需要添加"
+        continue
+    fi
+
+    #3. 如果主仓库中有与备份仓库中同名的branch，则进一步比对
+    echo "备份仓库中有'$branch'分支"
+    if [ -z "$(git diff $branch_in_main $branch_in_bkup)" ]; then
+        #3-1. 如果同名的branch中的commit记录完全一致，则不进行操作
+        echo "主仓库和备份仓库中的'$branch'没有diff，无需修改"
+        continue
+    fi
+
+    echo "用主仓库的'$branch'和覆盖备份仓库的'$branch'"
+done
+
+#TODO: 4. push备份仓库
 cd ..
 
 function pack_repo() {
