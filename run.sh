@@ -14,7 +14,9 @@ function backup_repo() {
     echo "开始备份"$URL
     CLONE_URL=$(eval "echo $url | sed 's/https:\/\/github.com/https:\/\/$GH_TOKEN@github.com/g'")
     REPO_NAME=$(eval "echo $url | sed 's/.*'$USER'\/\(.*\).git$/\1/g'")
-    if [ -x "$REPO_NAME.tar.gz"]; then
+    if [ -x "$REPO_NAME.tar.gz" ]; then
+        rm -rf ./main && mkdir ./main
+        rm -rf ./bkup && mkdir ./bkup
         tar zxvf $REPO_NAME.tar.gz -C ./main
         ./getrepo.sh $CLONE_URL ./bkup
         ./backup.sh ./main ./bkup
