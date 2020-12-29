@@ -1,0 +1,8 @@
+language: python
+python:
+  - 3.8 # use nodejs v12 LTS
+branches:
+  only:
+    - master
+script:
+  - bash run.sh yindaheng98 http://$GH_TOKEN@github.com/yindaheng98/backup test $GH_TOKEN
