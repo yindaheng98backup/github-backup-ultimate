@@ -11,7 +11,7 @@ curl -s $REPOS_URL | jq -c '.[].clone_url' | while read URL; do
     rm -rf ./main && mkdir ./main #下载待备份主仓库
     CLONE_URL=$(eval "echo $URL | sed 's/https:\/\/github.com/https:\/\/$GH_TOKEN@github.com/g'")
     REPO_NAME=$(eval "echo $URL | sed 's/.*'$USER'\/\(.*\).git$/\1/g'")
-    ../getrepo.sh $CLONE_URL ./main
+    ./getrepo.sh $CLONE_URL ./main
     cd ./main
     git push -u $GE_PREFIX'/'$REPO_NAME --all origin -f #直接强推到gitee
     #TODO: 仓库不存在时创建
