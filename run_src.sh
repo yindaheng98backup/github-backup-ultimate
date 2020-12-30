@@ -8,6 +8,7 @@ git clone -b $SRC_BRANCH $SRC_REPO ./src
 git clone -b $BKP_BRANCH $BKP_REPO ./bkp
 cd ./bkp
 git remote add src ../src
+git fetch src
 git branch -a
 git checkout src/$SRC_BRANCH
 git branch -d $BKP_BRANCH
