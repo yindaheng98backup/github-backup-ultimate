@@ -4,5 +4,8 @@ python:
 branches:
   only:
     - master
+pre_install:
+  - chmod +x getrepo.sh
+  - chmod +x backup.sh
 script:
   - bash -x run.sh yindaheng98 https://$GH_TOKEN@github.com/yindaheng98/backup backup_repo $GH_TOKEN
