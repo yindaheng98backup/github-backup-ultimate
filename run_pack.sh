@@ -46,3 +46,5 @@ git add -A
 git commit -m 'TravisCI Backup '$(date '+%Y%m%d%H%M%S')
 set -e
 git push -u $PACKREPO_URL HEAD:$PACKREPO_BRANCH --force
+
+cd ..
