@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -v
 GH_TOKEN=$4
 
 PACKREPO_URL=$2
