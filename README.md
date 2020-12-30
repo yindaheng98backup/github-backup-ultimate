@@ -31,11 +31,16 @@ F-->|否|结束(结束)
 
 ## 实现
 
-### `run_pack.sh`和`run_dir.sh`：主程序
+### `run_pack.sh`：打包备份主程序
 
-主程序`run_pack.sh`和`run_dir.sh`的输入格式相同：`$1`是要备份的github用户名、`$2`是备份汇总仓库的地址、`$2`备份压缩文件在仓库中存储的分支地址。
+主程序`run_pack.sh`的输入格式：`$1`是要备份的github用户名、`$2`是备份汇总仓库的地址、`$2`备份压缩文件在仓库中存储的分支地址。
 
-`run_pack.sh`在备份后会将每个仓库打成压缩包上传，而`run_dir.sh`直接将`.git`文件夹上传。
+`run_pack.sh`在备份后会将每个仓库打成压缩包上传。
+
+### `run_dir.sh`：仓库同步主程序
+`run_dir.sh`直接将github上的仓库强制推送到gitee的同名仓库。
+
+输入格式：`$1`是要备份的github用户名、`$2`是github上的access token、`$3`是备份到的gitee用户名、`$4`是gitee上的access token。
 
 ### `getrepo.sh`：拉取仓库
 
