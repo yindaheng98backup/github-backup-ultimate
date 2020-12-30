@@ -40,6 +40,8 @@ curl -s $REPOS_URL | jq -c '.[].clone_url' | while read url; do
     backup_repo $url
 done
 
+ls -lht
+du -h --max-depth=2
 git config user.name "TravisCI"
 git config user.email "yindaheng98@163.com"
 set -e
