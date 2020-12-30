@@ -4,7 +4,7 @@ python:
 branches:
   only:
     - master
-pre_install:
+before_install:
   - chmod +x getrepo.sh
   - chmod +x backup.sh
 script:
