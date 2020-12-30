@@ -7,6 +7,7 @@ branches:
 before_install:
   - chmod +x getrepo.sh
   - chmod +x backup.sh
+  - git lfs install
 script:
   - bash -x run_pack.sh yindaheng98 https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup backup_repo_pack $GH_TOKEN
   - bash -x run_dir.sh yindaheng98 https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup backup_repo_dir $GH_TOKEN

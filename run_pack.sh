@@ -41,7 +41,7 @@ set -e
 git init
 git config user.name "TravisCI"
 git config user.email "yindaheng98@163.com"
-git config http.postBuffer 100000000
+git lfs track "./*.tar.gz"
 git add -A
 git commit -m 'TravisCI Backup '$(date '+%Y%m%d%H%M%S')
 set -e
