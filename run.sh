@@ -15,12 +15,12 @@ function backup_repo() {
     echo "开始备份"$URL
     rm -rf ./main && mkdir ./main
     rm -rf ./bkup && mkdir ./bkup
-    ../getrepo.sh $CLONE_URL ./main #下载待备份主仓库
+    ../getrepo.sh $CLONE_URL $(pwd)/main #下载待备份主仓库
     CLONE_URL=$(eval "echo $url | sed 's/https:\/\/github.com/https:\/\/$GH_TOKEN@github.com/g'")
     REPO_NAME=$(eval "echo $url | sed 's/.*'$USER'\/\(.*\).git$/\1/g'")
     if [ -x "./$REPO_NAME.tar.gz" ]; then    #对应的备份仓库压缩文件存在
         tar zxvf $REPO_NAME.tar.gz -C ./bkup #解压备份仓库
-        ../backup.sh ./main ./bkup           #执行备份操作
+        ../backup.sh $(pwd)/main $(pwd)/bkup           #执行备份操作
         rm -rf ./main                        #删除已备份主仓库
     else                                     #对应的备份仓库压缩文件不存在
         mv ./main ./bkup                     #直接移动
