@@ -13,7 +13,7 @@ git branch -a
 git checkout src/$SRC_BRANCH
 git branch -d $BKP_BRANCH
 git checkout -b $BKP_BRANCH
-git push --set-upstream origin $BKP_BRANCH
+git push --set-upstream origin $BKP_BRANCH --force
 cd ..
 rm -rf ./src
 rm -rf ./bkp
