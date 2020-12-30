@@ -8,4 +8,4 @@ before_install:
   - chmod +x getrepo.sh
   - chmod +x backup.sh
 script:
-  - bash -x run_pack.sh yindaheng98 https://$GH_TOKEN@github.com/yindaheng98/backup backup_repo $GH_TOKEN
+  - bash -x run_dir.sh yindaheng98 https://$GH_TOKEN@github.com/yindaheng98/backup backup_repo $GH_TOKEN

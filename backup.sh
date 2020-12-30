@@ -71,5 +71,5 @@ for branch in ${!branch_dict_main[@]}; do
     git branch -D $branch_in_bkup #删除备份仓库的$branch分支
     git checkout -b $branch       #将主仓库的$branch分支变成备份仓库的$branch分支
 done
-
+git branch -a
 cd ..
