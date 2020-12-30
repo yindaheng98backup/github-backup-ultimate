@@ -8,7 +8,7 @@ rm -rf $(pwd)/.git                                        #删除backup仓库的
 rm -rf $(pwd)/backup_repo                                 #删除backup_repo文件夹以免产生冲突
 git clone -b $PACKREPO_BRANCH $PACKREPO_URL ./backup_repo #下载备份汇总仓库到backup_repo文件夹
 cd $(pwd)/backup_repo                                     #进入备份汇总仓库
-
+rm -rf $(pwd)/.git                                        #删除备份汇总仓库原有的.git结构以免产生错误
 
 USER=$1
 REPOS_URL=https://api.github.com/users/$USER/repos?access_token="$GH_TOKEN"
@@ -35,7 +35,7 @@ done
 ls -lht
 du -h --max-depth=1
 set -e
-
+git init
 git config user.name "TravisCI"
 git config user.email "yindaheng98@163.com"
 git lfs track "./*"
