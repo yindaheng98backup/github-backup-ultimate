@@ -1,4 +1,5 @@
-#!/bin/bash -v
+#!/bin/bash
+
 GH_TOKEN=$4
 
 PACKREPO_URL=$2
@@ -18,8 +19,8 @@ function backup_repo() {
         rm -rf ./main && mkdir ./main
         rm -rf ./bkup && mkdir ./bkup
         tar zxvf $REPO_NAME.tar.gz -C ./main
-        ./getrepo.sh $CLONE_URL ./bkup
-        ./backup.sh ./main ./bkup
+        ../getrepo.sh $CLONE_URL ./bkup
+        ../backup.sh ./main ./bkup
         rm -rf ./main
     fi
     tar -zcvf ./$REPO_NAME.tar.gz ./bkup/.git
