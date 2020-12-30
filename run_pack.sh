@@ -37,10 +37,10 @@ done
 
 ls -lht
 du -h --max-depth=2
-git config user.name "TravisCI"
-git config user.email "yindaheng98@163.com"
 set -e
 git init
+git config user.name "TravisCI"
+git config user.email "yindaheng98@163.com"
 git add -A
 git commit -m 'TravisCI Backup'
 set -e
