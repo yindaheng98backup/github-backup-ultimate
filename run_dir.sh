@@ -38,7 +38,7 @@ set -e
 git init
 git config user.name "TravisCI"
 git config user.email "yindaheng98@163.com"
-git lfs track "./*"
+git lfs track $(find . -type f -size +100M)
 git add -A
 git commit -m 'TravisCI Backup '$(date '+%Y%m%d%H%M%S')
 set -e
