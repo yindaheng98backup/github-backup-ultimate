@@ -36,12 +36,13 @@ curl -s $REPOS_URL | jq -c '.[].clone_url' | while read URL; do
 done
 
 ls -lht
-du -h --max-depth=2
+du -h --max-depth=1
 set -e
 git init
 git config user.name "TravisCI"
 git config user.email "yindaheng98@163.com"
+git config http.postBuffer 100000000
 git add -A
-git commit -m 'TravisCI Backup'
+git commit -m 'TravisCI Backup '$(date '+%Y%m%d%H%M%S')
 set -e
 git push -u $PACKREPO_URL HEAD:$PACKREPO_BRANCH --force

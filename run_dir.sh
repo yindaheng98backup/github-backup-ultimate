@@ -9,6 +9,7 @@ rm -rf $(pwd)/backup_repo                                 #删除backup_repo文�
 git clone -b $PACKREPO_BRANCH $PACKREPO_URL ./backup_repo #下载备份汇总仓库到backup_repo文件夹
 cd $(pwd)/backup_repo                                     #进入备份汇总仓库
 
+
 USER=$1
 REPOS_URL=https://api.github.com/users/$USER/repos?access_token="$GH_TOKEN"
 curl -s $REPOS_URL | jq -c '.[].clone_url' | while read URL; do
@@ -32,10 +33,12 @@ curl -s $REPOS_URL | jq -c '.[].clone_url' | while read URL; do
 done
 
 ls -lht
-du -h --max-depth=2
+du -h --max-depth=1
 set -e
+
 git config user.name "TravisCI"
 git config user.email "yindaheng98@163.com"
+git config http.postBuffer 100000000
 git add -A
 git commit -m 'TravisCI Backup '$(date '+%Y%m%d%H%M%S')
 set -e
