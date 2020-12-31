@@ -10,9 +10,9 @@ cd $(pwd)/backup_repo                                     #进入备份汇总仓
 rm -rf $(pwd)/.git                                        #删除备份汇总仓库原有的.git结构以免产生错误
 
 PARAMS='{}'
-PARAMS=$(echo $PARAMS | jq ". + {\"visibility\": \"all\"}")
-PARAMS=$(echo $PARAMS | jq ". + {\"affiliation\": \"owner\"}")
-PARAMS=$(echo $PARAMS | jq ". + {\"per_page\": \"100\"}")
+PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"all\"}")
+PARAMS=$(echo $PARAMS | jq -c ". + {\"affiliation\": \"owner\"}")
+PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
 REPO_LIST=$(../get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
 while read REPO_NAME; do
     CLONE_URL=$(echo $REPO_LIST | jq -cr ".$REPO_NAME")
