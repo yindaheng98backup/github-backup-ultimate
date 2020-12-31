@@ -5,8 +5,7 @@ branches:
   only:
     - master
 before_install:
-  - chmod +x getrepo.sh
-  - chmod +x backup.sh
+  - chmod +x ./*
   - git lfs install
 script:
   - bash -x run_src.sh https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup-src master https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup master
