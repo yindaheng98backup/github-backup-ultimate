@@ -12,7 +12,7 @@ rm -rf $(pwd)/.git                                        #删除备份汇总仓
 
 USER=$1
 HEADER="Authorization: token $GH_TOKEN"
-REPOS_URL='https://api.github.com/user/repos?type=owner&per_page=100'
+REPOS_URL='https://api.github.com/user/repos?visibility=all&affiliation=owner&per_page=100'
 curl -H $HEADER -s $REPOS_URL | jq -c '.[].clone_url' | while read URL; do
     echo "开始备份"$URL
 
