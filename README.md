@@ -55,3 +55,20 @@ F-->|否|结束(结束)
 ### `run_src.sh`
 
 用`$1`地址所指仓库的`$2`分支覆盖`$3`地址所指仓库的`$4`分支。
+
+## 坑
+
+```sh
+PARAMS=$2 # GET链接的参数，JSON格式
+
+param=''
+#直接用管道符写while循环会开启新进程，使while里面的变量不能传到外部
+while read K; do
+    V=$(echo $PARAMS | jq -cr ".$K")
+    if [ $K ]; then
+        param=$param"$K=$V&"
+    fi
+done <<<$(echo $PARAMS | jq -cr 'keys | .[]')
+```
+
+这样的代码在Ubuntu 16.04上读出来第一个`$K`是`PARAMS`中所有的key组成的字符串，在Ubuntu 20.04上才是每个`$K`一个key。原因不知道。
