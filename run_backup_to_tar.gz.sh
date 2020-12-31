@@ -1,9 +1,9 @@
 #!/bin/bash
 
 USER=$1
-PACKREPO_URL=$2
-PACKREPO_BRANCH=$3
-GH_TOKEN=$4
+GH_TOKEN=$2
+PACKREPO_URL=$3
+PACKREPO_BRANCH=$4
 rm -rf $(pwd)/backup_repo                                 #删除backup_repo文件夹以免产生冲突
 git clone -b $PACKREPO_BRANCH $PACKREPO_URL ./backup_repo #下载备份汇总仓库到backup_repo文件夹
 cd $(pwd)/backup_repo                                     #进入备份汇总仓库
