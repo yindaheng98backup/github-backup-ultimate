@@ -11,9 +11,8 @@ cd $(pwd)/backup_repo                                     #进入备份汇总仓
 rm -rf $(pwd)/.git                                        #删除备份汇总仓库原有的.git结构以免产生错误
 
 USER=$1
-HEADER="Authorization: token $GH_TOKEN"
 REPOS_URL='https://api.github.com/user/repos?visibility=all&affiliation=owner&per_page=100'
-curl -H $HEADER -s $REPOS_URL | jq -c '.[].clone_url' | while read URL; do
+curl -H "Authorization: token $GH_TOKEN" -s $REPOS_URL | jq -c '.[].clone_url' | while read URL; do
     echo "开始备份"$URL
 
     rm -rf ./main && mkdir ./main #下载待备份主仓库
