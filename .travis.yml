@@ -9,5 +9,4 @@ before_install:
   - git lfs install
 script:
   - bash -x run_src.sh https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup-src master https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup master
-  - bash -x run_backup_to_tar.gz.sh yindaheng98 https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup backup_repo_pack $GH_TOKEN
-  - bash -x run_dir.sh yindaheng98 $GH_TOKEN yindaheng98 $GE_TOKEN
+  - bash -x run_backup_to_tar.gz.sh yindaheng98 $GH_TOKEN https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup backup_repo_pack

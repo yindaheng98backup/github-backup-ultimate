@@ -1,39 +1,28 @@
 #!/bin/bash
 
-GH_TOKEN=$4
-
+USER=$1
 PACKREPO_URL=$2
 PACKREPO_BRANCH=$3
-rm -rf $(pwd)/.git                                        #删除backup仓库的.git结构
+GH_TOKEN=$4
 rm -rf $(pwd)/backup_repo                                 #删除backup_repo文件夹以免产生冲突
 git clone -b $PACKREPO_BRANCH $PACKREPO_URL ./backup_repo #下载备份汇总仓库到backup_repo文件夹
 cd $(pwd)/backup_repo                                     #进入备份汇总仓库
 rm -rf $(pwd)/.git                                        #删除备份汇总仓库原有的.git结构以免产生错误
 
-USER=$1
-REPOS_URL='https://api.github.com/user/repos?visibility=all&affiliation=owner&per_page=100'
-curl -H "Authorization: token $GH_TOKEN" -s $REPOS_URL | jq -c '.[].clone_url' | while read URL; do
-    echo "开始备份"$URL
-
-    rm -rf ./main && mkdir ./main #下载待备份主仓库
-    CLONE_URL=$(eval "echo $URL | sed 's/https:\/\/github.com/https:\/\/$GH_TOKEN@github.com/g'")
-    REPO_NAME=$(eval "echo $URL | sed 's/.*'$USER'\/\(.*\).git$/\1/g'")
-    ../getrepo.sh $CLONE_URL $(pwd)/main
-
-    rm -rf ./bkup && mkdir ./bkup                 #构建备份仓库
-    if [ -x "./$REPO_NAME.tar.gz" ]; then         #对应的备份仓库压缩文件存在
-        tar zxvf $REPO_NAME.tar.gz -C $(pwd)/bkup #解压备份仓库
-    fi
-    if [ -x "./bkup/.git" ]; then            #备份仓库git目录存在
-        ../backup.sh $(pwd)/main $(pwd)/bkup #执行备份操作
-    else                                     #备份仓库git目录不存在
-        rm -rf $(pwd)/bkup                   #删除备份仓库
-        mv $(pwd)/main $(pwd)/bkup           #直接移动
-    fi
-    rm -rf ./main                                               #删除已备份主仓库
-    cd ./bkup && tar -zcvf ../$REPO_NAME.tar.gz ./.git && cd .. #打压缩包
-    rm -rf ./bkup                                               #删除备份仓库
-done
+PARAMS='{}'
+PARAMS=$(echo $PARAMS | jq ". + {\"visibility\": \"all\"}")
+PARAMS=$(echo $PARAMS | jq ". + {\"affiliation\": \"owner\"}")
+PARAMS=$(echo $PARAMS | jq ". + {\"per_page\": \"100\"}")
+REPO_LIST=$(./get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
+while read REPO_NAME; do
+    CLONE_URL=$(echo $REPO_LIST | jq -cr ".$REPO_NAME")
+    MAIN_REPO_LOCAL="$(pwd)/main"
+    BKUP_REPO_COMPRESS="$(pwd)/$REPO_NAME.tar.gz"
+    BKUP_REPO_LOCAL="$(pwd)/bkup"
+    bash -x ../download_repo.sh "$CLONE_URL" "$MAIN_REPO_LOCAL"                                      #下载主仓库
+    bash -x ../backup_to_local_tar.gz.sh "$MAIN_REPO_LOCAL" "$BKUP_REPO_COMPRESS" "$BKUP_REPO_LOCAL" #备份到压缩文件
+    rm -rf "$MAIN_REPO_LOCAL"
+done <<<$(echo $REPO_LIST | jq -cr 'keys | .[]')
 
 ls -lht
 du -h --max-depth=1
