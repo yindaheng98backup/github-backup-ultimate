@@ -13,9 +13,11 @@ REPO_LIST=$(../get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列�
 while read REPO_NAME; do
     CLONE_URL=$(echo $REPO_LIST | jq -cr ".[\"$REPO_NAME\"]")
     MAIN_REPO_LOCAL="$(pwd)/main"
-    BKUP_REPO_REMOTE=$(echo $REMOTE_LIST | jq -cr ".[\"$REPO_NAME\"]")
     BKUP_REPO_LOCAL="$(pwd)/bkup"
-    bash -x ../download_repo.sh "$CLONE_URL" "$MAIN_REPO_LOCAL"                                      #下载主仓库
-    bash -x ../backup_to_remote_repo.sh "$MAIN_REPO_LOCAL" "$BKUP_REPO_COMPRESS" "$BKUP_REPO_LOCAL" #备份到压缩文件
+    bash -x ../download_repo.sh "$CLONE_URL" "$MAIN_REPO_LOCAL" #下载主仓库
+    while read REPO_NAME; do
+        BKUP_REPO_REMOTE=$(echo $REMOTE_LIST | jq -cr ".[\"$REPO_NAME\"]")
+        bash -x ../backup_to_remote_repo.sh "$MAIN_REPO_LOCAL" "$BKUP_REPO_REMOTE" "$BKUP_REPO_LOCAL" #备份到remote
+    done <<<$(echo $REMOTE_LIST | jq -c ".[\"$REPO_NAME\"]" | jq -cr '.[]')
     rm -rf "$MAIN_REPO_LOCAL"
 done <<<$(echo $REPO_LIST | jq -cr 'keys | .[]')
