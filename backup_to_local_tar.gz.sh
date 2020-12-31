@@ -7,7 +7,8 @@ BKUP_REPO_COMPRESS=$2 #备份仓库压缩包名称
 BKUP_REPO_LOCAL=$3    #备份仓库本地目录
 PREDIR=$(pwd)
 
-if [ -x "$BKUP_REPO_COMPRESS" ]; then                #对应的备份仓库压缩文件存在
+rm -rf $BKUP_REPO_LOCAL && mkdir $BKUP_REPO_LOCAL
+if [ -x "$BKUP_REPO_COMPRESS" ]; then               #对应的备份仓库压缩文件存在
     tar zxf $BKUP_REPO_COMPRESS -C $BKUP_REPO_LOCAL #解压备份仓库
 fi
 if [ -x "$BKUP_REPO_LOCAL/.git" ]; then            #备份仓库git目录存在
@@ -18,5 +19,5 @@ else                                               #备份仓库git目录不存�
 fi
 cd $BKUP_REPO_LOCAL
 tar -zcf $BKUP_REPO_COMPRESS ./.git #打压缩包
-
 cd $PREDIR
+rm -rf $BKUP_REPO_LOCAL
