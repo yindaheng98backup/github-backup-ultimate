@@ -11,7 +11,7 @@ CREATE_URL='https://gitee.com/api/v5/user/repos'
 CREATE_HEADER='Content-Type: application/json;charset=UTF-8'
 CREATE_POST="{\"access_token\":\"$TOKEN\",\"name\":\"$REPO_NAME\"}"
 if [ $PRIVATE ]; then
-    CREATE_POST=$(echo '{}' | jq '. + {private: "true"}')
+    CREATE_POST=$(echo "$CREATE_POST" | jq '. + {private: "true"}')
 fi
 curl -X POST --header "$CREATE_HEADER" -s "$CREATE_URL" -d "$CREATE_POST" #先新建仓库
 REMOTE='https://'$USER':'$TOKEN'@gitee.com/'$USER'/'$REPO_NAME
