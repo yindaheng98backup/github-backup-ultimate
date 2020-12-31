@@ -7,7 +7,9 @@ param=''
 #直接用管道符写while循环会开启新进程，使while里面的变量不能传到外部
 while read K; do
     V=$(echo $PARAMS | jq -cr ".$K")
-    param=$param"$K=$V&"
+    if [ $K ]; then
+        param=$param"$K=$V&"
+    fi
 done <<<$(echo $PARAMS | jq -cr 'keys | .[]')
 
 REPOS_URL='https://api.github.com/user/repos?'$param
@@ -17,4 +19,4 @@ while read URL; do
     REPO_NAME=$(eval "echo $URL | sed 's/.*\/\([^\/]*\).git$/\1/g'")
     REPOS=$(echo $REPOS | jq ". + {\"$REPO_NAME\": \"$CLONE_URL\"}")
 done <<<$(curl -H "Authorization: token $TOKEN" -s $REPOS_URL | jq -c '.[].clone_url')
-echo $REPOS
+echo $REPOS | jq
