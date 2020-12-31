@@ -14,6 +14,7 @@ PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"all\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"affiliation\": \"owner\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
 REPO_LIST=$(../get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
+echo $REPO_LIST | jq
 while read REPO_NAME; do
     CLONE_URL=$(echo $REPO_LIST | jq -cr ".$REPO_NAME")
     MAIN_REPO_LOCAL="$(pwd)/main"
