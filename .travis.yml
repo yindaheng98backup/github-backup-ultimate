@@ -1,6 +1,4 @@
-language: python
-python:
-  - 3.8 # use nodejs v12 LTS
+dist: focal
 branches:
   only:
     - master
