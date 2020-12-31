@@ -2,26 +2,20 @@
 
 GH_USER=$1
 GH_TOKEN=$2
-GE_USER=$3
-GE_TOKEN=$4
+REMOTE_LIST=$3
 
-PUBLIC_REPOS_URL='https://api.github.com/user/repos?visibility=public&affiliation=owner&per_page=100'
-PRIVATE_REPOS_URL='https://api.github.com/user/repos?visibility=private&affiliation=owner&per_page=100'
-curl -H "Authorization: token $GH_TOKEN" -s $PUBLIC_REPOS_URL | jq -c '.[].clone_url' | while read URL; do
-    echo "开始备份公开仓库"$URL
-    rm -rf ./main && mkdir ./main #下载待备份主仓库
-    CLONE_URL=$(eval "echo $URL | sed 's/https:\/\/github.com/https:\/\/$GH_TOKEN@github.com/g'")
-    REPO_NAME=$(eval "echo $URL | sed 's/.*'$GH_USER'\/\(.*\).git$/\1/g'")
-    ./getrepo.sh $CLONE_URL ./main
-    ./backup_to_gitee.sh $(pwd)/main $GE_USER $GE_TOKEN $REPO_NAME ''
-    rm -rf ./main
-done
-curl -H $HEADER -s $PRIVATE_REPOS_URL | jq -c '.[].clone_url' | while read URL; do
-    echo "开始备份私有仓库"$URL
-    rm -rf ./main && mkdir ./main #下载待备份主仓库
-    CLONE_URL=$(eval "echo $URL | sed 's/https:\/\/github.com/https:\/\/$GH_TOKEN@github.com/g'")
-    REPO_NAME=$(eval "echo $URL | sed 's/.*'$GH_USER'\/\(.*\).git$/\1/g'")
-    ./getrepo.sh $CLONE_URL ./main
-    ./backup_to_gitee.sh $(pwd)/main $GE_USER $GE_TOKEN $REPO_NAME 'true'
-    rm -rf ./main
-done
+PARAMS='{}'
+PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"all\"}")
+PARAMS=$(echo $PARAMS | jq -c ". + {\"affiliation\": \"owner\"}")
+PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
+
+REPO_LIST=$(../get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
+while read REPO_NAME; do
+    CLONE_URL=$(echo $REPO_LIST | jq -cr ".[\"$REPO_NAME\"]")
+    MAIN_REPO_LOCAL="$(pwd)/main"
+    BKUP_REPO_REMOTE=$(echo $REMOTE_LIST | jq -cr ".[\"$REPO_NAME\"]")
+    BKUP_REPO_LOCAL="$(pwd)/bkup"
+    bash -x ../download_repo.sh "$CLONE_URL" "$MAIN_REPO_LOCAL"                                      #下载主仓库
+    bash -x ../backup_to_remote_repo.sh "$MAIN_REPO_LOCAL" "$BKUP_REPO_COMPRESS" "$BKUP_REPO_LOCAL" #备份到压缩文件
+    rm -rf "$MAIN_REPO_LOCAL"
+done <<<$(echo $REPO_LIST | jq -cr 'keys | .[]')
