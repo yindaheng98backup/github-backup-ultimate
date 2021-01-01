@@ -4,6 +4,7 @@ branches:
     - master
 before_install:
   - chmod +x ./*
+  - chmod +x ./get_remote_repo/*
   - git lfs install
   - sudo apt-get install -y jq
 script:
