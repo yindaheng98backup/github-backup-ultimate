@@ -17,6 +17,6 @@ REPOS='{}'
 while read URL; do
     CLONE_URL=$(eval "echo $URL | sed 's/https:\/\/github.com/https:\/\/$TOKEN@github.com/g'")
     REPO_NAME=$(eval "echo $URL | sed 's/.*\/\([^\/]*\).git$/\1/g'")
-    REPOS=$(echo $REPOS | jq ". + {\"$REPO_NAME\": \"$CLONE_URL\"}")
+    REPOS=$(echo $REPOS | jq -c ". + {\"$REPO_NAME\": \"$CLONE_URL\"}")
 done <<<$(curl -H "Authorization: token $TOKEN" -s $REPOS_URL | jq -c '.[].clone_url')
 echo $REPOS

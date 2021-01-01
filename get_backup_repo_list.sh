@@ -39,5 +39,5 @@ REMOTE_LIST_PRIVATE=$(get_backup_repo_list "$PARAMS" "$GH_TOKEN" 'true')
 REMOTE_LIST='{}'
 REMOTE_LIST=$(echo $REMOTE_LIST | jq -c ". + $REMOTE_LIST_PUBLIC")
 REMOTE_LIST=$(echo $REMOTE_LIST | jq -c ". + $REMOTE_LIST_PRIVATE")
-echo $REMOTE_LIST | jq .
+echo $REMOTE_LIST
 #这里REMOTE_LIST的值是一个JSON列表，格式见backup_all_to_remote.sh的说明
