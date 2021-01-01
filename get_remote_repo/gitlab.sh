@@ -13,7 +13,7 @@ if [ $PRIVATE ]; then
 else
     CREATE_URL=$CREATE_URL'&visibility=public'
 fi
-curl -X POST --header "$HEADER" -s "$CREATE_URL" #新建仓库
+curl -X POST --header "$HEADER" -s "$CREATE_URL" | jq . >&2 #新建仓库
 
 MODIFY_URL='https://gitlab.com/api/v4/projects/'$USER'%2F'$REPO_NAME
 if [ $PRIVATE ]; then
@@ -21,6 +21,6 @@ if [ $PRIVATE ]; then
 else
     MODIFY_URL=$MODIFY_URL'?visibility=public'
 fi
-curl -X PUT --header "$HEADER" -s "$MODIFY_URL" #修改已有仓库的private状态
+curl -X PUT --header "$HEADER" -s "$MODIFY_URL" | jq . >&2 #修改已有仓库的private状态
 
 echo 'https://'$USER':'$TOKEN'@gitlab.com/'$USER'/'$REPO_NAME
