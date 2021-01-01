@@ -12,6 +12,7 @@ PARAMS='{}'
 PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"all\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"affiliation\": \"owner\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
+PARAMS=$(echo $PARAMS | jq -c ". + {\"sort\": \"updated\"}")
 
 REPO_LIST=$(./get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
 while read REPO_NAME; do
