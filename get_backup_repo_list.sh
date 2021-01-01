@@ -34,6 +34,7 @@ function get_backup_repo_list() {
 PARAMS='{}'
 PARAMS=$(echo $PARAMS | jq -c ". + {\"affiliation\": \"owner\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
+PARAMS=$(echo $PARAMS | jq -c ". + {\"sort\": \"updated\"}")
 REMOTE_LIST_PUBLIC=$(get_backup_repo_list "$PARAMS" "$GH_TOKEN")
 REMOTE_LIST_PRIVATE=$(get_backup_repo_list "$PARAMS" "$GH_TOKEN" 'true')
 REMOTE_LIST='{}'

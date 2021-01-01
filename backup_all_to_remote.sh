@@ -27,4 +27,4 @@ while read REPO_NAME; do
         bash -x ./backup_to_remote_repo.sh "$MAIN_REPO_LOCAL" "$BKUP_REPO_REMOTE" "$BKUP_REPO_LOCAL" #备份到remote
     done <<<$(echo $REMOTE_LIST | jq ".[\"$REPO_NAME\"]" | jq -cr '.[]')
     rm -rf "$MAIN_REPO_LOCAL"
-done <<<$(echo $REPO_LIST | jq -cr 'keys | .[]')
+done <<<$(echo $REPO_LIST | jq -cr 'keys_unsorted | .[]')

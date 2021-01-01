@@ -13,6 +13,8 @@ PARAMS='{}'
 PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"all\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"affiliation\": \"owner\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
+PARAMS=$(echo $PARAMS | jq -c ". + {\"sort\": \"updated\"}")
+
 REPO_LIST=$(../get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
 while read REPO_NAME; do
     CLONE_URL=$(echo $REPO_LIST | jq -cr ".[\"$REPO_NAME\"]")
@@ -22,7 +24,7 @@ while read REPO_NAME; do
     bash -x ../download_repo.sh "$CLONE_URL" "$MAIN_REPO_LOCAL"                                      #下载主仓库
     bash -x ../backup_to_local_tar.gz.sh "$MAIN_REPO_LOCAL" "$BKUP_REPO_COMPRESS" "$BKUP_REPO_LOCAL" #备份到压缩文件
     rm -rf "$MAIN_REPO_LOCAL"
-done <<<$(echo $REPO_LIST | jq -cr 'keys | .[]')
+done <<<$(echo $REPO_LIST | jq -cr 'keys_unsorted | .[]')
 
 ls -lht
 du -h --max-depth=1
