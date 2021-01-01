@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#备份项目本身
+
 SRC_REPO=$1
 SRC_BRANCH=$2
 BKP_REPO=$3
