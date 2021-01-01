@@ -5,7 +5,7 @@ GH_TOKEN=$2
 PACKREPO_URL=$3
 PACKREPO_BRANCH=$4
 rm -rf $(pwd)/backup_repo                                 #删除backup_repo文件夹以免产生冲突
-git clone -b $PACKREPO_BRANCH $PACKREPO_URL ./backup_repo #下载备份汇总仓库到backup_repo文件夹
+GIT_CURL_VERBOSE=1 GIT_TRACE=1 git clone -b $PACKREPO_BRANCH $PACKREPO_URL ./backup_repo #下载备份汇总仓库到backup_repo文件夹
 cd $(pwd)/backup_repo                                     #进入备份汇总仓库
 rm -rf $(pwd)/.git                                        #删除备份汇总仓库原有的.git结构以免产生错误
 
@@ -34,6 +34,6 @@ git lfs track $(find . -type f -size +100M)
 git add -A
 git commit -m 'TravisCI Backup '$(date '+%Y%m%d%H%M%S')
 set -e
-git push -u $PACKREPO_URL HEAD:$PACKREPO_BRANCH --force
+GIT_CURL_VERBOSE=1 GIT_TRACE=1 git push -u $PACKREPO_URL HEAD:$PACKREPO_BRANCH --force
 
 cd ..
