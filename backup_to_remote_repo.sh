@@ -3,8 +3,8 @@
 #将主仓库备份到一个远端仓库中
 
 MAIN_REPO_LOCAL=$1  #主仓库本地目录
-BKUP_REPO_REMOTE=$3 #备份仓库远端目录
-BKUP_REPO_LOCAL=$2  #备份仓库本地目录
+BKUP_REPO_REMOTE=$2 #备份仓库远端目录
+BKUP_REPO_LOCAL=$3  #备份仓库本地目录
 PREDIR=$(pwd)
 
 rm -rf $BKUP_REPO_LOCAL && mkdir $BKUP_REPO_LOCAL
