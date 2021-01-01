@@ -1,6 +1,50 @@
 # backup
 A series of scripts to backup my code to other sites.
 
+## 使用方法
+
+### 压缩文件式备份
+
+```sh
+GH_TOKEN=<你在GitHub上的Personal Access Token>
+BKUP_TOKEN=<你在备份仓库中的Personal Access Token>
+./run_backup_to_tar.gz.sh <GitHub用户名> $GH_TOKEN https://$BKUP_TOKEN@<网址>/<备份仓库用户名>/<仓库> <分支>
+```
+
+将GitHub上在`<GitHub用户名>`用户下的所有仓库备份后打包成压缩文件，然后用git传到`https://$BKUP_TOKEN@<网址>/<备份仓库用户名>/<仓库>`仓库的`<分支>`下。
+
+比如，将GitHub上的`yindaheng98`的所有仓库备份后打包成压缩文件备份到一个自建仓库`fuck_backup.yindaheng98.top/fuck98/backup`下的`backup_repo_pack`分支中：
+
+```sh
+GH_TOKEN=XXXXXXXXXXXXXXX
+BKUP_TOKEN=XXXXXXXXXXXXXXX
+./run_backup_to_tar.gz.sh yindaheng98 $GH_TOKEN https://$BKUP_TOKEN@fuck_backup.yindaheng98.top/fuck98/backup backup_repo_pack
+```
+
+### 仓库式备份
+
+仓库式备份目前支持`Gitee`和`Gitlab`。
+
+```sh
+GH_TOKEN=<你在GitHub上的Personal Access Token>
+GL_TOKEN=<你在Gitlab上的Personal Access Token>
+GE_TOKEN=<你在Gitee上的Personal Access Token>
+BACKUP_REPO_LIST=$(./get_backup_repo_list.sh <GitHub用户名> $GH_TOKEN "[\"get_remote_repo/gitee.sh <Gitee用户名> $GE_TOKEN\",\"get_remote_repo/gitlab.sh <Gitlab用户名> $GL_TOKEN\"]")
+./backup_all_to_remote.sh <GitHub用户名> $GH_TOKEN $BACKUP_REPO_LIST
+```
+
+将GitHub上在`<GitHub用户名>`用户下的所有仓库备份到Gitlab和Gitee中对应`<Gitlab用户名>`和`<Gitee用户名>`下的同名仓库中，且其可见性与Github上的仓库可见性相同。
+
+比如，将GitHub上的`yindaheng98`的所有仓库备份到Gitlab和Gitee的`yindaheng98`下的仓库中：
+
+```sh
+GH_TOKEN=XXXXXXXXXXXXXXX
+GL_TOKEN=XXXXXXXXXXXXXXX
+GE_TOKEN=XXXXXXXXXXXXXXX
+BACKUP_REPO_LIST=$(./get_backup_repo_list.sh yindaheng98 $GH_TOKEN "[\"get_remote_repo/gitee.sh yindaheng98 $GE_TOKEN\",\"get_remote_repo/gitlab.sh yindaheng98 $GL_TOKEN\"]")
+./backup_all_to_remote.sh yindaheng98 $GH_TOKEN $BACKUP_REPO_LIST
+```
+
 ## 原理
 
 ### 定义
@@ -12,6 +56,8 @@ A series of scripts to backup my code to other sites.
 * 备份汇总仓库：所有的备份仓库最后都会打成压缩包汇总到这个仓库中
 
 ### 仓库备份流程
+
+注意，本项目中执行的所谓“备份”不是简单地将仓库下载再原封不动地上传到备份仓库中，而是遵循如下备份流程：
 
 ```mermaid
 graph TD
@@ -27,30 +73,35 @@ F-->|是|B1
 F-->|否|结束(结束)
 ```
 
-备份仓库构造完成之后，还会有集中打压缩包和push到备份汇总仓库的操作，流程图略。
+### `get_backup_repo_list.sh`和`backup_all_to_remote.sh`
 
-## 实现
+在前面讲到的使用方法中，可以看到一条合用`get_backup_repo_list.sh`和`backup_all_to_remote.sh`的指令，功能解释如下：
 
-### `run_pack.sh`：打包备份主程序
+```sh
+BACKUP_REPO_LIST=$(./get_backup_repo_list.sh <GitHub用户名> $GH_TOKEN "[\"get_remote_repo/gitee.sh <Gitee用户名> $GE_TOKEN\",\"get_remote_repo/gitlab.sh <Gitlab用户名> $GL_TOKEN\"]")
+```
 
-主程序`run_pack.sh`的输入格式：`$1`是要备份的github用户名、`$2`是备份汇总仓库的地址、`$2`备份压缩文件在仓库中存储的分支地址。
+这个命令包含如下功能：
 
-`run_pack.sh`在备份后会将每个仓库打成压缩包上传。
+1. 自动抓取`<GitHub用户名>`下所有仓库及可见性
+2. 对每个仓库都调用后面那个JSON数组中写出的两个指令，这两个指令分别调用Gitlab和Gitee的API执行操作：
+   1. 在Gitlab/Gitee上创建具有同样可见性的同名备份仓库
+   2. 修改已有备份仓库的可见性以使之与Github上的仓库可见性相同
+   3. 返回clone备份仓库的地址（包含token的那种地址）
+3. 将所有备份仓库的clone地址聚合为一个JSON Object
+4. 返回聚合而成的JSON Object
 
-### `run_dir.sh`：仓库同步主程序
-`run_dir.sh`直接将github上的仓库强制推送到gitee的同名仓库。
+```sh
+./backup_all_to_remote.sh <GitHub用户名> $GH_TOKEN $BACKUP_REPO_LIST
+```
 
-输入格式：`$1`是要备份的github用户名、`$2`是github上的access token、`$3`是备份到的gitee用户名、`$4`是gitee上的access token。
+这个命令包含如下功能：
 
-### `getrepo.sh`：拉取仓库
-
-该文件负责拉取仓库。脚本参数为一个仓库URL和一个文件夹路径：`$1`是仓库URL、`$2`是文件夹路径，用于指示将仓库的`.git`目录放到哪个文件夹下。
-
-注意，`getrepo.sh`只拉取`.git`目录，不拉取其他文件。
-
-### `backup.sh`：构造备份仓库
-
-构造备份仓库的主要逻辑都在`backup.sh`文件中，该文件负责按照上文中的流程图操作备份仓库。脚本参数为两个文件夹路径：`$1`是主仓库的文件夹路径、`$2`是备份仓库的文件夹路径。
+1. 读取上一步聚合而成的JSON Object
+2. 自动抓取`<GitHub用户名>`下所有仓库
+3. 对每个仓库都从JSON Object中找到对应的备份仓库地址
+   * 每个仓库的备份仓库地址都包含一个Gitlab上的地址和一个Gitee上的地址
+4. 执行备份操作并推送备份仓库
 
 ### `run_src.sh`
 
