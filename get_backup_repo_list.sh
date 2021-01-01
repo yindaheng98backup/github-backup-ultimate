@@ -23,7 +23,7 @@ function get_backup_repo_list() {
     while read REPO_NAME; do
         CLONE_URLS='[]'
         while read SCRIPT; do
-            CLONE_URL=$(eval "bash -x $SCRIPT $REPO_NAME $PRIVATE")
+            CLONE_URL=$(eval "$SCRIPT $REPO_NAME $PRIVATE")
             CLONE_URLS=$(echo $CLONE_URLS | jq -c ". + [\"$CLONE_URL\"]")
         done <<<$(echo $SCRIPTS | jq -cr '.[]')
         REMOTE_LIST=$(echo $REMOTE_LIST | jq -c ". + {\"$REPO_NAME\": $CLONE_URLS}")
