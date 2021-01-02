@@ -6,7 +6,7 @@ DIR=$2 #仓库目录
 PRE=$(pwd)
 rm -rf $DIR
 mkdir $DIR
-GIT_CURL_VERBOSE=1 git clone --mirror $URL $DIR/.git #下载仓库中的所有branch
+git clone --mirror $URL $DIR/.git #下载仓库中的所有branch
 cd $DIR
 git config --bool core.bare false
 cd $PRE
