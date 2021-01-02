@@ -11,7 +11,7 @@ rm -rf $BKUP_REPO_LOCAL && mkdir $BKUP_REPO_LOCAL
 ./download_repo.sh $BKUP_REPO_REMOTE $BKUP_REPO_LOCAL #下载仓库
 ./backup.sh $MAIN_REPO_LOCAL $BKUP_REPO_LOCAL         #执行备份
 cd $BKUP_REPO_LOCAL
-GIT_CURL_VERBOSE=1 GIT_TRACE=1 git push --all -f -u $BKUP_REPO_REMOTE #直接强推到远端
+GIT_CURL_VERBOSE=1 git push --all -f -u $BKUP_REPO_REMOTE #直接强推到远端
 
 cd $PREDIR
 rm -rf $BKUP_REPO_LOCAL
