@@ -1,0 +1,5 @@
+.ossutilconfig
+ossutil.log
+ossutil*
+CMD.sh
+REMOTE_PATH
