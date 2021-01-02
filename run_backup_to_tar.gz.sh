@@ -1,13 +1,10 @@
 #!/bin/bash
 
-USER=$1
-GH_TOKEN=$2
-PACKREPO_URL=$3
-PACKREPO_BRANCH=$4
-rm -rf $(pwd)/backup_repo                                 #删除backup_repo文件夹以免产生冲突
-GIT_CURL_VERBOSE=1 git clone -b $PACKREPO_BRANCH $PACKREPO_URL ./backup_repo #下载备份汇总仓库到backup_repo文件夹
-cd $(pwd)/backup_repo                                     #进入备份汇总仓库
-rm -rf $(pwd)/.git                                        #删除备份汇总仓库原有的.git结构以免产生错误
+GH_TOKEN=$1
+PLUGIN_PATH=$2
+rm -rf $(pwd)/backup_repo                           #删除backup_repo文件夹以免产生冲突
+bash -x $PLUGIN_PATH/download.sh $(pwd)/backup_repo #下载备份汇总仓库到backup_repo文件夹
+cd $(pwd)/backup_repo                               #进入备份汇总仓库
 
 PARAMS='{}'
 PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"all\"}")
@@ -28,14 +25,6 @@ done <<<$(echo $REPO_LIST | jq -cr 'keys_unsorted | .[]')
 
 ls -lht
 du -h --max-depth=1
-set -e
-git init
-git config user.name "TravisCI"
-git config user.email "yindaheng98@163.com"
-git lfs track $(find . -type f -size +100M)
-git add -A
-git commit -m 'TravisCI Backup '$(date '+%Y%m%d%H%M%S')
-set -e
-GIT_CURL_VERBOSE=1 git push -u $PACKREPO_URL HEAD:$PACKREPO_BRANCH --force
-
 cd ..
+bash -x $PLUGIN_PATH/upload.sh $(pwd)/backup_repo #上传备份汇总仓库
+rm -rf $(pwd)/backup_repo

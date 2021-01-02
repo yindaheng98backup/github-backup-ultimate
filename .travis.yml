@@ -9,6 +9,11 @@ before_install:
   - sudo apt-get install -y jq
 script:
   - bash -x run_backup_src.sh https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup-src master https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup master
+  - PLUGIN_PATH=$(pwd)'/plugins/remote_filesystem/aliyun_oss'
+  - endpoint='oss-cn-hangzhou.aliyuncs.com'
+  - backupPath='oss://github-backup'
+  - $PLUGIN_PATH/configure.sh $accessKeyID $accessKeySecret $endpoint $backupPath
+  - ./run_backup_to_tar.gz.sh $GH_TOKEN $PLUGIN_PATH
+  - bash -x run_backup_to_tar.gz.sh yindaheng98 $GH_TOKEN https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup backup_repo_pack
   - BACKUP_REPO_LIST=$(./get_backup_repo_list.sh yindaheng98 $GH_TOKEN "[\"get_remote_repo/gitee.sh yindaheng98 $GE_TOKEN\",\"get_remote_repo/gitlab.sh yindaheng98 $GL_TOKEN\"]")
   - bash backup_all_to_remote.sh yindaheng98 $GH_TOKEN $BACKUP_REPO_LIST
-  - bash run_backup_to_tar.gz.sh yindaheng98 $GH_TOKEN https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup backup_repo_pack

@@ -6,19 +6,26 @@ A series of scripts to backup my code to other sites.
 ### 压缩文件式备份
 
 ```sh
+PLUGIN_PATH=<网络文件系统插件路径>
 GH_TOKEN=<你在GitHub上的Personal Access Token>
-BKUP_TOKEN=<你在备份仓库中的Personal Access Token>
-./run_backup_to_tar.gz.sh <GitHub用户名> $GH_TOKEN https://$BKUP_TOKEN@<网址>/<备份仓库用户名>/<仓库> <分支>
+./run_backup_to_tar.gz.sh $GH_TOKEN $PLUGIN_PATH
 ```
 
-将GitHub上在`<GitHub用户名>`用户下的所有仓库备份后打包成压缩文件，然后用git传到`https://$BKUP_TOKEN@<网址>/<备份仓库用户名>/<仓库>`仓库的`<分支>`下。
+将GitHub上在`GH_TOKEN`对应用户下的所有仓库备份后打包成压缩文件，然后用网络文件系统插件进行上传。
 
-比如，将GitHub上的`yindaheng98`的所有仓库备份后打包成压缩文件备份到一个自建仓库`fuck_backup.yindaheng98.top/fuck98/backup`下的`backup_repo_pack`分支中：
+网络文件系统插件是什么？见[plugins/remote_filesystem](plugins/remote_filesystem)中的解释。本项目自带一个Aliyun OSS的插件。
+
+如果用本项目提供的Aliyun OSS插件上传：
 
 ```sh
-GH_TOKEN=XXXXXXXXXXXXXXX
-BKUP_TOKEN=XXXXXXXXXXXXXXX
-./run_backup_to_tar.gz.sh yindaheng98 $GH_TOKEN https://$BKUP_TOKEN@fuck_backup.yindaheng98.top/fuck98/backup backup_repo_pack
+accessKeyID=<你的Aliyun账户的 AccessKey ID>
+accessKeySecret=<你的Aliyun账户 AccessKey Secret>
+endpoint=<备份汇总仓库Bucket所在地域的Endpoint>
+backupPath=<备份汇总仓库文件夹路径，比如 oss://github-backups/backup1>
+PLUGIN_PATH=$(pwd)'/plugins/remote_filesystem/aliyun_oss'
+GH_TOKEN=<你在GitHub上的Personal Access Token>
+$PLUGIN_PATH/configure.sh $accessKeyID $accessKeySecret $endpoint $backupPath
+./run_backup_to_tar.gz.sh $GH_TOKEN $PLUGIN_PATH
 ```
 
 ### 仓库式备份
