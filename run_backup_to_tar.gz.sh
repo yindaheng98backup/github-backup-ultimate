@@ -23,8 +23,6 @@ while read REPO_NAME; do
     rm -rf "$MAIN_REPO_LOCAL"
 done <<<$(echo $REPO_LIST | jq -cr 'keys_unsorted | .[]')
 
-ls -lht
-du -h --max-depth=1
 cd ..
 bash -x $PLUGIN_PATH/upload.sh $(pwd)/backup_repo #上传备份汇总仓库
 rm -rf $(pwd)/backup_repo
