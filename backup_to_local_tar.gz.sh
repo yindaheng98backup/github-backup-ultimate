@@ -12,7 +12,7 @@ rm -rf $BKUP_REPO_LOCAL && mkdir $BKUP_REPO_LOCAL
 if [ -f $BKUP_REPO_COMPRESS ]; then               #对应的备份仓库压缩文件存在
     tar zxf $BKUP_REPO_COMPRESS -C $BKUP_REPO_LOCAL #解压备份仓库
 fi
-if [ -f $BKUP_REPO_LOCAL'/.git' ]; then                       #备份仓库git目录存在
+if [ -d $BKUP_REPO_LOCAL'/.git' ]; then                       #备份仓库git目录存在
     changed=$(../backup.sh $MAIN_REPO_LOCAL $BKUP_REPO_LOCAL) #执行备份操作
 else                                                          #备份仓库git目录不存在
     rm -rf $BKUP_REPO_LOCAL                                   #删除备份仓库
