@@ -5,8 +5,8 @@
 GH_USER=$1
 GH_TOKEN=$2
 SCRIPTS=$3
-#这里的SCRIPTS是一个JSON列表：
-# [ "./get_remote_repo/gitee.sh 用户名 token ", "./get_remote_repo/gitlab.sh 用户名 token ", ... ]
+#这里的PLUGINS是一个仓库创建/修改/返回Clone URL插件列表：
+# [ "./plugins/make_repo_available/gitee.sh 用户名 token ", "./plugins/make_repo_available/gitlab.sh 用户名 token ", ... ]
 #列表里面的值后面只要加一个REPO_NAME和PRIVATE就能自动创建修改仓库然后返回仓库clone url
 
 function get_backup_repo_list() {

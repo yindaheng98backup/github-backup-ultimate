@@ -1,5 +1,8 @@
 # backup
+
 A series of scripts to backup my code to other sites.
+
+一键将你的代码备份到其他平台，或打成压缩包上传到云存储中。
 
 ## 使用方法
 
@@ -36,7 +39,8 @@ $PLUGIN_PATH/configure.sh $accessKeyID $accessKeySecret $endpoint $backupPath
 GH_TOKEN=<你在GitHub上的Personal Access Token>
 GL_TOKEN=<你在Gitlab上的Personal Access Token>
 GE_TOKEN=<你在Gitee上的Personal Access Token>
-BACKUP_REPO_LIST=$(./get_backup_repo_list.sh <GitHub用户名> $GH_TOKEN "[\"get_remote_repo/gitee.sh <Gitee用户名> $GE_TOKEN\",\"get_remote_repo/gitlab.sh <Gitlab用户名> $GL_TOKEN\"]")
+REPO_PLUGINS="[\"plugins/make_repo_available/gitee.sh <Gitee用户名> $GE_TOKEN\",\"plugins/make_repo_available/gitlab.sh <Gitlab用户名> $GL_TOKEN\"]"
+BACKUP_REPO_LIST=$(./get_backup_repo_list.sh <GitHub用户名> $GH_TOKEN "$REPO_PLUGINS")
 ./backup_all_to_remote.sh <GitHub用户名> $GH_TOKEN $BACKUP_REPO_LIST
 ```
 
@@ -48,7 +52,8 @@ BACKUP_REPO_LIST=$(./get_backup_repo_list.sh <GitHub用户名> $GH_TOKEN "[\"get
 GH_TOKEN=XXXXXXXXXXXXXXX
 GL_TOKEN=XXXXXXXXXXXXXXX
 GE_TOKEN=XXXXXXXXXXXXXXX
-BACKUP_REPO_LIST=$(./get_backup_repo_list.sh yindaheng98 $GH_TOKEN "[\"get_remote_repo/gitee.sh yindaheng98 $GE_TOKEN\",\"get_remote_repo/gitlab.sh yindaheng98 $GL_TOKEN\"]")
+REPO_PLUGINS="[\"plugins/make_repo_available/gitee.sh yindaheng98 $GE_TOKEN\",\"plugins/make_repo_available/gitlab.sh yindaheng98 $GL_TOKEN\"]"
+BACKUP_REPO_LIST=$(./get_backup_repo_list.sh yindaheng98 $GH_TOKEN "$REPO_PLUGINS")
 ./backup_all_to_remote.sh yindaheng98 $GH_TOKEN $BACKUP_REPO_LIST
 ```
 
@@ -85,7 +90,8 @@ F-->|否|结束(结束)
 在前面讲到的使用方法中，可以看到一条合用`get_backup_repo_list.sh`和`backup_all_to_remote.sh`的指令，功能解释如下：
 
 ```sh
-BACKUP_REPO_LIST=$(./get_backup_repo_list.sh <GitHub用户名> $GH_TOKEN "[\"get_remote_repo/gitee.sh <Gitee用户名> $GE_TOKEN\",\"get_remote_repo/gitlab.sh <Gitlab用户名> $GL_TOKEN\"]")
+REPO_PLUGINS="[\"plugins/make_repo_available/gitee.sh <Gitee用户名> $GE_TOKEN\",\"plugins/make_repo_available/gitlab.sh <Gitlab用户名> $GL_TOKEN\"]"
+BACKUP_REPO_LIST=$(./get_backup_repo_list.sh <GitHub用户名> $GH_TOKEN "$REPO_PLUGINS")
 ```
 
 这个命令包含如下功能：
