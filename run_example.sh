@@ -5,7 +5,7 @@
 # 如果两个一起做那必有一个做不了
 # 于是出此下策
 
-bash -x run_backup_src.sh https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup-src master https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup master
+bash -x run_backup_src.sh https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/backup-src master https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/github-backup-ultimate master
 if [ $(($RANDOM % 2)) -eq 0 ]; then
     echo '这次备份到Gitee/Gitlab'
     REPO_PLUGINS="[\"plugins/make_repo_available/gitee.sh yindaheng98 $GE_TOKEN\",\"plugins/make_repo_available/gitlab.sh yindaheng98 $GL_TOKEN\"]"
