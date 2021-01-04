@@ -4,7 +4,6 @@ branches:
     - master
 before_install:
   - chmod +x ./* -R
-  - git lfs install
-  - sudo apt-get install -y jq
+  - sudo apt-get install -y jq git
 script:
   - bash -x run_example.sh

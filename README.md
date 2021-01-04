@@ -164,7 +164,7 @@ BACKUP_REPO_LIST=$(./get_backup_repo_list.sh <GitHub用户名> $GH_TOKEN "$REPO_
 ## 坑
 
 ```sh
-PARAMS=$2 # GET链接的参数，JSON格式
+PARAMS='{"affiliation":"owner","per_page":"100","sort":"updated","visibility":"private"}' # GET链接的参数，JSON格式
 
 param=''
 #直接用管道符写while循环会开启新进程，使while里面的变量不能传到外部
@@ -174,6 +174,7 @@ while read K; do
         param=$param"$K=$V&"
     fi
 done <<<$(echo $PARAMS | jq -cr 'keys | .[]')
+echo $param
 ```
 
 这样的代码在Ubuntu 16.04上读出来第一个`$K`是`PARAMS`中所有的key组成的字符串，在Ubuntu 20.04上才是每个`$K`一个key。原因不知道。
