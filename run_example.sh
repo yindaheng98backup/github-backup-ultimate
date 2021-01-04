@@ -12,6 +12,6 @@ else
     PLUGIN_PATH=$(pwd)'/plugins/remote_filesystem/aliyun_oss'
     endpoint='oss-cn-hangzhou.aliyuncs.com'
     backupPath='oss://github-backup'
-    $PLUGIN_PATH/configure.sh $accessKeyID $accessKeySecret $endpoint $backupPath && \
+    $PLUGIN_PATH/configure.sh $accessKeyID $accessKeySecret $endpoint $backupPath
     ./run_backup_to_tar.gz.sh $GH_TOKEN $PLUGIN_PATH
 fi
