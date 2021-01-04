@@ -1,4 +1,6 @@
 dist: focal
+services:
+  - docker
 branches:
   only:
     - master
