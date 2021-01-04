@@ -178,3 +178,17 @@ echo $param
 ```
 
 这样的代码在Ubuntu 16.04上读出来第一个`$K`是`PARAMS`中所有的key组成的字符串，在Ubuntu 20.04上才是每个`$K`一个key。原因不知道。
+
+最好用`for`循环：
+
+```sh
+PARAMS='{"affiliation":"owner","per_page":"100","sort":"updated","visibility":"private"}'
+param=''
+for K in $(echo $PARAMS | jq -cr 'keys | .[]'); do
+    V=$(echo $PARAMS | jq -cr ".$K")
+    if [ $K ]; then
+        param=$param"$K=$V&"
+    fi
+done
+echo $param
+```

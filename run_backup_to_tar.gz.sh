@@ -13,7 +13,7 @@ PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"sort\": \"updated\"}")
 
 REPO_LIST=$(../get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
-while read REPO_NAME; do
+for REPO_NAME in $(echo $REPO_LIST | jq -cr 'keys_unsorted | .[]'); do
     CLONE_URL=$(echo $REPO_LIST | jq -cr ".[\"$REPO_NAME\"]")
     MAIN_REPO_LOCAL="$(pwd)/main"
     BKUP_REPO_COMPRESS="$(pwd)/$REPO_NAME.tar.gz"
@@ -21,7 +21,7 @@ while read REPO_NAME; do
     bash -x ../download_repo.sh "$CLONE_URL" "$MAIN_REPO_LOCAL"                                      #下载主仓库
     bash -x ../backup_to_local_tar.gz.sh "$MAIN_REPO_LOCAL" "$BKUP_REPO_COMPRESS" "$BKUP_REPO_LOCAL" #备份到压缩文件
     rm -rf "$MAIN_REPO_LOCAL"
-done <<<$(echo $REPO_LIST | jq -cr 'keys_unsorted | .[]')
+done
 
 cd ..
 bash -x $PLUGIN_PATH/upload.sh $(pwd)/backup_repo #上传备份汇总仓库

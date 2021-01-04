@@ -15,7 +15,7 @@ PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"sort\": \"updated\"}")
 
 REPO_LIST=$(./get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
-while read REPO_NAME; do
+for REPO_NAME in $(echo $REPO_LIST | jq -cr 'keys_unsorted | .[]'); do
     if [ $(echo "$REMOTE_LIST" | jq ". | has(\"$REPO_NAME\")") = "false" ]; then
         continue
     fi
@@ -23,8 +23,8 @@ while read REPO_NAME; do
     MAIN_REPO_LOCAL="$(pwd)/main"
     BKUP_REPO_LOCAL="$(pwd)/bkup"
     bash -x ./download_repo.sh "$CLONE_URL" "$MAIN_REPO_LOCAL" #下载主仓库
-    while read BKUP_REPO_REMOTE; do
+    for BKUP_REPO_REMOTE in $(echo $REMOTE_LIST | jq ".[\"$REPO_NAME\"]" | jq -cr '.[]'); do
         bash -x ./backup_to_remote_repo.sh "$MAIN_REPO_LOCAL" "$BKUP_REPO_REMOTE" "$BKUP_REPO_LOCAL" #备份到remote
-    done <<<$(echo $REMOTE_LIST | jq ".[\"$REPO_NAME\"]" | jq -cr '.[]')
+    done
     rm -rf "$MAIN_REPO_LOCAL"
-done <<<$(echo $REPO_LIST | jq -cr 'keys_unsorted | .[]')
+done

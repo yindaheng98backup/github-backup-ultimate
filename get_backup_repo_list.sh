@@ -20,14 +20,14 @@ function get_backup_repo_list() {
     fi
     REMOTE_LIST='{}'
     REPO_LIST=$(./get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
-    while read REPO_NAME; do
+    for REPO_NAME in $(echo $REPO_LIST | jq -cr 'keys | .[]'); do
         CLONE_URLS='[]'
-        while read SCRIPT; do
+        for SCRIPT in $(echo $SCRIPTS | jq -cr '.[]'); do
             CLONE_URL=$(eval "$SCRIPT $REPO_NAME $PRIVATE")
             CLONE_URLS=$(echo $CLONE_URLS | jq -c ". + [\"$CLONE_URL\"]")
-        done <<<$(echo $SCRIPTS | jq -cr '.[]')
+        done
         REMOTE_LIST=$(echo $REMOTE_LIST | jq -c ". + {\"$REPO_NAME\": $CLONE_URLS}")
-    done <<<$(echo $REPO_LIST | jq -cr 'keys | .[]')
+    done
     echo $REMOTE_LIST
 }
 
