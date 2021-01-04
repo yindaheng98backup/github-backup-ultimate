@@ -192,3 +192,21 @@ for K in $(echo $PARAMS | jq -cr 'keys | .[]'); do
 done
 echo $param
 ```
+
+## 坑
+
+```sh
+for SCRIPT in $(echo '["plugins/make_repo_available/gitee.sh yindaheng98 123456","plugins/make_repo_available/gitlab.sh yindaheng98 654321"]' | jq -cr '.[]'); do
+echo $SCRIPT
+done
+
+while read SCRIPT;do
+echo $SCRIPT
+done <<<$(echo '["plugins/make_repo_available/gitee.sh yindaheng98 123456","plugins/make_repo_available/gitlab.sh yindaheng98 654321"]' | jq -cr '.[]')
+```
+
+我就知道又要出问题，不多说，把这个代码执行一遍就知道是什么鬼了。
+
+心中一万只草泥马奔腾而过。
+
+这辈子都不拿shell写程序了，Python它不香吗
