@@ -13,21 +13,23 @@ function get_backup_repo_list() {
     PARAMS=$1
     GH_TOKEN=$2
     PRIVATE=$3
-    if [ $PRIVATE ]; then
-        PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"private\"}")
-    else
+    if [ $PRIVATE='false' ]; then
         PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"public\"}")
+    else
+        PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"private\"}")
     fi
     REMOTE_LIST='{}'
-    REPO_LIST=$(./get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
-    while read REPO_NAME; do
+    CONTENTS=$(./get_repo_content_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
+    while read CONTENT; do
+        REPO_NAME=$(echo $CONTENT | jq -cr '.name')
+        DESCRIPTION=$(echo $CONTENT | jq -cr '.description')
         CLONE_URLS='[]'
         while read SCRIPT; do
-            CLONE_URL=$(eval "$SCRIPT $REPO_NAME $PRIVATE")
+            CLONE_URL=$(eval "$SCRIPT '$REPO_NAME' '$PRIVATE' '$DESCRIPTION'")
             CLONE_URLS=$(echo $CLONE_URLS | jq -c ". + [\"$CLONE_URL\"]")
         done <<<$(echo $SCRIPTS | jq -cr '.[]')
         REMOTE_LIST=$(echo $REMOTE_LIST | jq -c ". + {\"$REPO_NAME\": $CLONE_URLS}")
-    done <<<$(echo $REPO_LIST | jq -cr 'keys | .[]')
+    done <<<$(echo $CONTENTS | jq -c '.[] | {name: .name, description: .description}')
     echo $REMOTE_LIST
 }
 
@@ -35,7 +37,7 @@ PARAMS='{}'
 PARAMS=$(echo $PARAMS | jq -c ". + {\"affiliation\": \"owner\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"sort\": \"updated\"}")
-REMOTE_LIST_PUBLIC=$(get_backup_repo_list "$PARAMS" "$GH_TOKEN")
+REMOTE_LIST_PUBLIC=$(get_backup_repo_list "$PARAMS" "$GH_TOKEN" 'false')
 REMOTE_LIST_PRIVATE=$(get_backup_repo_list "$PARAMS" "$GH_TOKEN" 'true')
 REMOTE_LIST='{}'
 REMOTE_LIST=$(echo $REMOTE_LIST | jq -c ". + $REMOTE_LIST_PUBLIC")
