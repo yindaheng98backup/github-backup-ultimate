@@ -2,17 +2,17 @@
 
 GH_TOKEN=$1
 PLUGIN_PATH=$2
-rm -rf $(pwd)/backup_repo                           #删除backup_repo文件夹以免产生冲突
-bash -x $PLUGIN_PATH/download.sh $(pwd)/backup_repo #下载备份汇总仓库到backup_repo文件夹
-cd $(pwd)/backup_repo                               #进入备份汇总仓库
-
 PARAMS='{}'
 PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"all\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"affiliation\": \"owner\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"sort\": \"updated\"}")
+REPO_LIST=$(./get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
 
-REPO_LIST=$(../get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
+rm -rf $(pwd)/backup_repo                           #删除backup_repo文件夹以免产生冲突
+bash -x $PLUGIN_PATH/download.sh $(pwd)/backup_repo #下载备份汇总仓库到backup_repo文件夹
+cd $(pwd)/backup_repo                               #进入备份汇总仓库
+
 while read REPO_NAME; do
     CLONE_URL=$(echo $REPO_LIST | jq -cr ".[\"$REPO_NAME\"]")
     MAIN_REPO_LOCAL="$(pwd)/main"
