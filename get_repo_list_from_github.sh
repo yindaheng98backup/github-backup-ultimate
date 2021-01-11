@@ -1,7 +1,11 @@
 #!/bin/bash
 
 TOKEN=$1  # personal access token
-PARAMS=$2 # GET链接的参数，JSON格式
+PARAMS='{}' # GET链接的参数，JSON格式
+PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"all\"}")
+PARAMS=$(echo $PARAMS | jq -c ". + {\"affiliation\": \"owner\"}")
+PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
+PARAMS=$(echo $PARAMS | jq -c ". + {\"sort\": \"updated\"}")
 REPOS='{}'
 while read CONTENT; do
     REPO_NAME=$(echo $CONTENT | jq -cr '.name')

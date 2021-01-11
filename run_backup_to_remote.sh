@@ -7,13 +7,7 @@ REMOTE_LIST=$(./get_backup_repo_list.sh $GH_USER $GH_TOKEN "$REPO_PLUGINS")
 #这里REMOTE_LIST的值是一个JSON列表：
 # {"github上的仓库名称": ["gitee上的备份仓库clone url", "gitlab上的备份仓库clone url", ...], ...}
 
-PARAMS='{}'
-PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"all\"}")
-PARAMS=$(echo $PARAMS | jq -c ". + {\"affiliation\": \"owner\"}")
-PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
-PARAMS=$(echo $PARAMS | jq -c ". + {\"sort\": \"updated\"}")
-
-REPO_LIST=$(./get_repo_list_from_github.sh $GH_TOKEN $PARAMS) #获取仓库列表
+REPO_LIST=$(./get_repo_list_from_github.sh $GH_TOKEN) #获取仓库列表
 while read REPO_NAME; do
     if [ $(echo "$REMOTE_LIST" | jq ". | has(\"$REPO_NAME\")") = "false" ]; then
         continue
