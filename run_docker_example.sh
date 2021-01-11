@@ -5,6 +5,8 @@
 # 如果两个一起做那必有一个做不了
 # 于是出此下策
 
+DAYS_AGO='10'
+echo "本次备份将在$DAYS_AGO天内有修改记录的仓库中进行"
 ./mirror_to_remote_repo.sh $(pwd) https://$GH_BKUP_TOKEN@github.com/yindaheng98backup/github-backup-ultimate
 if [ $(($RANDOM % 2)) -eq 0 ]; then
     echo '这次备份到Gitee/Gitlab'
@@ -12,7 +14,8 @@ if [ $(($RANDOM % 2)) -eq 0 ]; then
     docker build -t temp -f ./run_backup_to_remote.Dockerfile \
     --build-arg USER=yindaheng98 \
     --build-arg GH_TOKEN=$GH_TOKEN \
-    --build-arg REPO_PLUGINS="$REPO_PLUGINS"
+    --build-arg REPO_PLUGINS="$REPO_PLUGINS" \
+    --build-arg DAYS_AGO=$DAYS_AGO
     docker rmi temp
     docker run --rm -v '.:'
 else
@@ -23,6 +26,7 @@ else
     --build-arg accessKeyID=$accessKeyID
     --build-arg accessKeySecret=$accessKeySecret
     --build-arg endpoint='oss-cn-hangzhou.aliyuncs.com'
-    --build-arg backupPath='oss://github-backup'
+    --build-arg backupPath='oss://github-backup' \
+    --build-arg DAYS_AGO=$DAYS_AGO
     docker rmi temp
 fi

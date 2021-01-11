@@ -2,7 +2,12 @@
 
 GH_TOKEN=$1
 PLUGIN_PATH=$2
-REPO_LIST=$(./get_repo_list_from_github.sh $GH_TOKEN) #获取仓库列表
+DAYS_AGO=$3
+REPO_LIST=$(./get_repo_list_from_github.sh $GH_TOKEN $DAYS_AGO) #获取仓库列表
+if [ "$REPO_LIST" = "{}" ]; then                                    #没有仓库可备份的就退出
+    echo '没有仓库需要备份'
+    exit 0
+fi
 
 rm -rf $(pwd)/backup_repo                           #删除backup_repo文件夹以免产生冲突
 bash -x $PLUGIN_PATH/download.sh $(pwd)/backup_repo #下载备份汇总仓库到backup_repo文件夹
