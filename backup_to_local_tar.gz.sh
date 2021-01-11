@@ -2,28 +2,22 @@
 
 #将主仓库备份到一个压缩包中
 
-MAIN_REPO_LOCAL=$1    #主仓库本地目录
-BKUP_REPO_COMPRESS=$2 #备份仓库压缩包名称
-BKUP_REPO_LOCAL=$3    #备份仓库本地目录
-PREDIR=$(pwd)
+REPO_NAME=$1       #仓库名称
+MAIN_REPO_LOCAL=$2 #主仓库本地目录
+BKUP_REPO_LOCAL=$3 #备份仓库本地目录
+PLUGIN_PATH=$4     #存储插件地址
 
 changed=''
 rm -rf $BKUP_REPO_LOCAL && mkdir $BKUP_REPO_LOCAL
-if [ -f $BKUP_REPO_COMPRESS ]; then                 #对应的备份仓库压缩文件存在
-    tar zxf $BKUP_REPO_COMPRESS -C $BKUP_REPO_LOCAL #解压备份仓库
-fi
-if [ -d $BKUP_REPO_LOCAL'/.git' ]; then                       #备份仓库git目录存在
-    changed=$(../backup.sh $MAIN_REPO_LOCAL $BKUP_REPO_LOCAL) #执行备份操作
-else                                                          #备份仓库git目录不存在
-    rm -rf $BKUP_REPO_LOCAL                                   #删除备份仓库
-    cp -r $MAIN_REPO_LOCAL $BKUP_REPO_LOCAL                   #直接移动
+bash -x $PLUGIN_PATH/download.sh $BKUP_REPO_NAME $BKUP_REPO_LOCAL #下载仓库
+if [ -d $BKUP_REPO_LOCAL'/.git' ]; then                           #备份仓库git目录存在
+    changed=$(./backup.sh $MAIN_REPO_LOCAL $BKUP_REPO_LOCAL)      #执行备份操作
+else                                                              #备份仓库git目录不存在
+    rm -rf $BKUP_REPO_LOCAL                                       #删除备份仓库
+    cp -r $MAIN_REPO_LOCAL $BKUP_REPO_LOCAL                       #直接移动
     changed='1'
 fi
-if [ $changed ]; then #如果被修改了
-    cd $BKUP_REPO_LOCAL
-    tar -zcf $BKUP_REPO_COMPRESS ./.git #就重打压缩包
-    cd $PREDIR
-else
-    rm $BKUP_REPO_COMPRESS
+if [ $changed ]; then                                               #如果被修改了
+    bash -x $PLUGIN_PATH/upload.sh $BKUP_REPO_NAME $BKUP_REPO_LOCAL #就上传仓库
 fi
 rm -rf $BKUP_REPO_LOCAL

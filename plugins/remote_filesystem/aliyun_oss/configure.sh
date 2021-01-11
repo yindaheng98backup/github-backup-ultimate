@@ -7,6 +7,7 @@ accessKeySecret=$2
 endpoint=$3
 REMOTE_PATH=$4
 CONF_PATH=$(dirname ${BASH_SOURCE[0]})
+mkdir -p "$CONF_PATH/TEMP"
 EXEC_FILE=$CONF_PATH/ossutil64
 if ! [ -x $EXEC_FILE ]; then
     wget http://gosspublic.alicdn.com/ossutil/1.7.0/ossutil64 -O $EXEC_FILE
