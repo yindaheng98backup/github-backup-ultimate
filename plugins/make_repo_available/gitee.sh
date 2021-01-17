@@ -15,9 +15,7 @@ POST_DATA=$(echo "$POST_DATA" | jq -c '. + {private: "true"}')
 if [ $PRIVATE='false' ]; then
     POST_DATA=$(echo "$POST_DATA" | jq -c '. + {private: "false"}')
 fi
-curl -X POST --header "$HEADER" -s "$CREATE_URL" -d "$POST_DATA" | jq . >&2 #新建仓库
+curl -X POST --header "$HEADER" -s "$CREATE_URL" -d "$POST_DATA" | jq . #新建仓库
 
 MODIFY_URL="https://gitee.com/api/v5/repos/$USER/$REPO_NAME"
-curl -X PATCH --header "$HEADER" -s "$MODIFY_URL" -d "$POST_DATA" | jq . >&2 #修改已有仓库的private状态
-
-echo 'https://'$USER':'$TOKEN'@gitee.com/'$USER'/'$REPO_NAME
+curl -X PATCH --header "$HEADER" -s "$MODIFY_URL" -d "$POST_DATA" | jq . #修改已有仓库的private状态
