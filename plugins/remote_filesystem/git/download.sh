@@ -11,4 +11,5 @@ rm -rf $LOCAL
 git clone --mirror $URL $LOCAL/.git #下载仓库中的所有branch
 cd $LOCAL
 git config --bool core.bare false
+git checkout --
 cd $PRE
