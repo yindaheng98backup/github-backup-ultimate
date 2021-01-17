@@ -8,4 +8,7 @@ before_install:
   - chmod +x ./* -R
   - sudo apt-get install -y jq git
 script:
-  - bash -x run_docker_example.sh
+  - bash -x run_example.sh self
+  - bash -x run_example.sh gitee 10
+  - bash -x run_example.sh gitlab 10
+  - bash -x run_example.sh oss 10
