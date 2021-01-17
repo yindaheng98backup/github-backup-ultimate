@@ -1,10 +1,11 @@
 #!/bin/bash
 
-GH_TOKEN=$1
-PLUGIN_PATH=$2
-DAYS_AGO=$3
+GH_USER=$1
+GH_TOKEN=$2
+PLUGIN_PATH=$3
+DAYS_AGO=$4
 
-PARAMS='{}'     # GET链接的参数，JSON格式
+PARAMS='{}' # GET链接的参数，JSON格式
 PARAMS=$(echo $PARAMS | jq -c ". + {\"visibility\": \"all\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"affiliation\": \"owner\"}")
 PARAMS=$(echo $PARAMS | jq -c ". + {\"per_page\": \"100\"}")
@@ -20,8 +21,8 @@ while read REPO_NAME; do
         continue
     fi
     REPO_NAME=$(echo $CONTENT | jq -cr '.name')
-    bash -x ./github_api/download_repo.sh "$REPO_NAME" "$MAIN_REPO_LOCAL" "$PLUGIN_PATH" #备份
-    bash -x ./backup_to_remote.sh "$REPO_NAME" "$MAIN_REPO_LOCAL" "$PLUGIN_PATH" #备份
-    rm -rf "$MAIN_REPO_LOCAL"                                                    #删除主仓库
+    bash -x ./github_api/download_repo.sh "$GH_USER" "$GH_TOKEN" "$REPO_NAME" "$MAIN_REPO_LOCAL" #下载主仓库
+    bash -x ./backup_to_remote.sh "$REPO_NAME" "$MAIN_REPO_LOCAL" "$PLUGIN_PATH"                 #备份
+    rm -rf "$MAIN_REPO_LOCAL"                                                                    #删除主仓库
 done <<<$(./github_api/get_repo_content_from_github.sh $GH_TOKEN $PARAMS | jq -cr '.[] | .name')
 echo $REPOS
