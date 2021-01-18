@@ -21,3 +21,4 @@ elif [ "$PLATFORM" = 'bitbucket' ]; then
 else
     rm -f $CONF_PATH
 fi
+chmod +x $CONF_PATH
