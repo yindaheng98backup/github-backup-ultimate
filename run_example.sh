@@ -23,8 +23,8 @@ elif [ "$1" = 'gitlab' ]; then
 elif [ "$1" = 'bitbucket' ]; then
     echo '备份到Bitbucket'
     PLUGIN_PATH=$(pwd)'/plugins/remote_filesystem/git'
-    bash -x ./make_repo_available.sh yindaheng98 $GH_TOKEN "plugins/make_repo_available/bitbucket.sh yindaheng98 $GL_TOKEN" $DAYS_AGO
-    bash -x $PLUGIN_PATH/configure.sh 'https://yindaheng98:'$GL_TOKEN'@bitbucket.com/yindaheng98'
+    bash -x ./make_repo_available.sh yindaheng98 $GH_TOKEN "plugins/make_repo_available/bitbucket.sh yindaheng98 $GB_TOKEN" $DAYS_AGO
+    bash -x $PLUGIN_PATH/configure.sh 'https://yindaheng98:'$GB_TOKEN'@bitbucket.com/yindaheng98'
     bash -x ./backup_all_to_remote.sh 'yindaheng98' $GH_TOKEN $PLUGIN_PATH $DAYS_AGO
 else
     echo '备份到Aliyun OSS'
