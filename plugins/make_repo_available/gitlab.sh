@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#创建仓库并返回仓库clone地址
+#创建仓库并修改仓库可见性
 
 USER=$1
 TOKEN=$2
@@ -9,7 +9,7 @@ PRIVATE=$4
 DESCRIPTION="$5"
 HEADER="PRIVATE-TOKEN: $TOKEN"
 URL_DATA="--data-urlencode 'description=$DESCRIPTION'"
-if [ $PRIVATE='false' ]; then
+if [ "$PRIVATE" = 'false' ]; then
     URL_DATA=$URL_DATA" --data-urlencode 'visibility=public'"
 else
     URL_DATA=$URL_DATA" --data-urlencode 'visibility=private'"

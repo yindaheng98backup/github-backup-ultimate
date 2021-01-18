@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#创建仓库并返回仓库clone地址
+#创建仓库并修改仓库可见性
 
 USER=$1
 TOKEN=$2
@@ -12,7 +12,7 @@ CREATE_URL='https://gitee.com/api/v5/user/repos'
 POST_DATA="{\"access_token\":\"$TOKEN\",\"name\":\"$REPO_NAME\"}"
 POST_DATA=$(echo "$POST_DATA" | jq --arg DESC "$DESCRIPTION" '. + {description: $DESC}')
 POST_DATA=$(echo "$POST_DATA" | jq -c '. + {private: "true"}')
-if [ $PRIVATE='false' ]; then
+if [ "$PRIVATE" = 'false' ]; then
     POST_DATA=$(echo "$POST_DATA" | jq -c '. + {private: "false"}')
 fi
 curl -X POST --header "$HEADER" -s "$CREATE_URL" -d "$POST_DATA" | jq . #新建仓库

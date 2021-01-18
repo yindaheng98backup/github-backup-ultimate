@@ -11,4 +11,5 @@ script:
   - bash -x run_example.sh self
   - bash -x run_example.sh gitee 10
   - bash -x run_example.sh gitlab 10
+  - bash -x run_example.sh bitbucket 10
   - bash -x run_example.sh oss 10
