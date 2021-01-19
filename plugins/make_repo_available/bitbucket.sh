@@ -7,9 +7,10 @@ TOKEN=$2
 REPO_NAME=$3
 PRIVATE=$4
 DESCRIPTION="$5"
+SLUG=${REPO_NAME,,}
 HEADER='Content-Type: application/json;charset=UTF-8'
-URL='https://api.bitbucket.org/2.0/repositories/'$USER'/'$REPO_NAME
-POST_DATA='{"scm": "git","project": {"key": "BACKUP"}}'
+URL='https://api.bitbucket.org/2.0/repositories/'$USER'/'$SLUG
+POST_DATA='{"scm": "git", "name": "'$REPO_NAME'","project": {"key": "BACKUP"}}'
 POST_DATA=$(echo "$POST_DATA" | jq --arg DESC "$DESCRIPTION" '. + {description: $DESC}')
 POST_DATA=$(echo "$POST_DATA" | jq -c '. + {fork_policy: "no_forks"}') #TODO: fork_policy改不了，为什么？
 POST_DATA=$(echo "$POST_DATA" | jq -c '. + {is_private: "true"}')
