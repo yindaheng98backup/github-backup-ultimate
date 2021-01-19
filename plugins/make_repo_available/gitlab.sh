@@ -19,6 +19,7 @@ CREATE_URL='https://gitlab.com/api/v4/projects'
 CREATE_CMD="curl -X POST --header '$HEADER' -s '$CREATE_URL' $URL_DATA --data-urlencode 'name=$REPO_NAME'"
 eval "$CREATE_CMD" | jq . #新建仓库
 
-MODIFY_URL='https://gitlab.com/api/v4/projects/'$USER'%2F'$REPO_NAME
+PATH=${REPO_NAME//./-}
+MODIFY_URL='https://gitlab.com/api/v4/projects/'$USER'%2F'$PATH
 MODIFY_CMD="curl -X PUT --header '$HEADER' -s '$MODIFY_URL' $URL_DATA"
 eval "$MODIFY_CMD" | jq . #修改已有仓库的private状态
