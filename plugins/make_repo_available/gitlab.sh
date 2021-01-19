@@ -7,19 +7,17 @@ TOKEN=$2
 REPO_NAME=$3
 PRIVATE=$4
 DESCRIPTION="$5"
-HEADER="PRIVATE-TOKEN: $TOKEN"
-URL_DATA="--data-urlencode 'description=$DESCRIPTION'"
+HEADER="Content-Type: application/json;charset=UTF-8"
+TOKEN_HEADER="PRIVATE-TOKEN: $TOKEN"
+
+POST_DATA='{"name": "'$REPO_NAME'", "path": "'$REPO_NAME'", "description": "'$DESCRIPTION'"}'
+POST_DATA=$(echo "$POST_DATA" | jq -c '. + {visibility: "private"}')
 if [ "$PRIVATE" = 'false' ]; then
-    URL_DATA=$URL_DATA" --data-urlencode 'visibility=public'"
-else
-    URL_DATA=$URL_DATA" --data-urlencode 'visibility=private'"
+    POST_DATA=$(echo "$POST_DATA" | jq -c '. + {visibility: "public"}')
 fi
 
 CREATE_URL='https://gitlab.com/api/v4/projects'
-CREATE_CMD="curl -X POST --header '$HEADER' -s '$CREATE_URL' $URL_DATA --data-urlencode 'name=$REPO_NAME'"
-eval "$CREATE_CMD" | jq . #新建仓库
+curl -X POST --header "$HEADER" -H "$TOKEN_HEADER" -s "$CREATE_URL" -d "$POST_DATA" | jq . #新建仓库
 
-PATH=${REPO_NAME//./-}
-MODIFY_URL='https://gitlab.com/api/v4/projects/'$USER'%2F'$PATH
-MODIFY_CMD="curl -X PUT --header '$HEADER' -s '$MODIFY_URL' $URL_DATA"
-eval "$MODIFY_CMD" | jq . #修改已有仓库的private状态
+MODIFY_URL='https://gitlab.com/api/v4/projects/'$USER'%2F'$REPO_NAME
+curl -X PUT --header "$HEADER" -H "$TOKEN_HEADER" -s "$MODIFY_URL" -d "$POST_DATA" | jq . #修改已有仓库的private状态

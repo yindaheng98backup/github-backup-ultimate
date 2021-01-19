@@ -14,7 +14,7 @@ elif [ "$PLATFORM" = 'gitee' ]; then
     echo "echo $PERFIX/\$1" >$CONF_PATH
 elif [ "$PLATFORM" = 'gitlab' ]; then
     PERFIX="https://$USER:$TOKEN@gitlab.com/$USER"
-    echo "echo $PERFIX/\${1//./-}" >$CONF_PATH
+    echo "echo $PERFIX/\$1" >$CONF_PATH
 elif [ "$PLATFORM" = 'bitbucket' ]; then
     PERFIX="https://$USER:$TOKEN@bitbucket.org/$USER"
     echo "echo $PERFIX/\${1,,}" >$CONF_PATH
