@@ -13,7 +13,7 @@ elif [ "$1" = 'gitee' ]; then
     PLUGIN_PATH=$(pwd)'/plugins/remote_filesystem/git'
     bash -x ./make_repo_available.sh yindaheng98 $GH_TOKEN "plugins/make_repo_available/gitee.sh yindaheng98 $GE_TOKEN" $DAYS_AGO
     bash -x $PLUGIN_PATH/configure.sh 'gitee' 'yindaheng98' $GE_TOKEN
-    bash -x ./backup_all_to_remote.sh $GH_TOKEN $PLUGIN_PATH $DAYS_AGO
+    bash -x ./backup_all_to_remote.sh 'yindaheng98' $GH_TOKEN $PLUGIN_PATH $DAYS_AGO
 elif [ "$1" = 'gitlab' ]; then
     echo '备份到Gitlab'
     PLUGIN_PATH=$(pwd)'/plugins/remote_filesystem/git'
