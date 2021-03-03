@@ -9,7 +9,7 @@ PRE_DIR=$(pwd)
 
 git --git-dir="$BKUP_REPO/.git" remote add main $MAIN_REPO >&2          #添加主仓库作为备份仓库的远程仓库
 git --git-dir="$BKUP_REPO/.git" --work-tree="$BKUP_REPO" fetch main >&2 #将主仓库的内容获取到备份仓库
-cd $BKUP_REPO && git checkout -- >&2
+cd $BKUP_REPO && git checkout -- .>&2
 
 #主仓库branch:ref列表
 echo "主仓库：" >&2
