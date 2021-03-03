@@ -11,7 +11,7 @@ changed=''
 rm -rf $BKUP_REPO_LOCAL && mkdir $BKUP_REPO_LOCAL
 bash -x $PLUGIN_PATH/download.sh $REPO_NAME $BKUP_REPO_LOCAL #下载仓库
 if [ -d $BKUP_REPO_LOCAL'/.git' ]; then                      #备份仓库git目录存在
-    changed=$(bash -x ./backup.sh $MAIN_REPO_LOCAL $BKUP_REPO_LOCAL) #执行备份操作
+    changed=$(./backup.sh $MAIN_REPO_LOCAL $BKUP_REPO_LOCAL) #执行备份操作
 else                                                         #备份仓库git目录不存在
     rm -rf $BKUP_REPO_LOCAL                                  #删除备份仓库
     cp -r $MAIN_REPO_LOCAL $BKUP_REPO_LOCAL                  #直接移动
