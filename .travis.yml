@@ -1,0 +1,9 @@
+dist: focal
+branches:
+  only:
+    - master
+script:
+  - rm -rf ./.git
+  - git clone https://$GH_TOKEN@$SRC_REPO ./src
+  - cd ./src
+  - git push --all -f -u https://$GH_TOKEN@github.com/yindaheng98backup/github-backup-ultimate
